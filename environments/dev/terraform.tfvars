@@ -1,0 +1,6 @@
+resource_group_name = "parveen-dev-rg1"
+location            = "Canada Central"
+environment         = "dev"
+owner               = "Parveen"
+app_name            = "bookshelf-dev-api"
+service_plan_name   = "bookshelf-app-plan"
