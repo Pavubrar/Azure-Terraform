@@ -6,7 +6,7 @@ pool:
 
 variables:
   terraformVersion: "1.6.6"
-  serviceConnection: "terraform-auto-connection"
+  serviceConnection: "new-terraform-connection"
   -name: "environmrent"
   value: "dev"
 
