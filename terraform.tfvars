@@ -1,4 +1,4 @@
-resource_group_name = "parveen-dev-rg"
+resource_group_name = "parveen-dev-rg1"
 location            = "Canada Central"
 environment         = "dev"
 owner               = "Parveen"
