@@ -214,11 +214,7 @@ stages:
 
 
 
-    - task: TerraformInstaller@0
-
-      inputs:
-
-        terraformVersion: $(terraformVersion)
+    - template: templates/terraform-install.yml
 
 
 
@@ -371,11 +367,7 @@ stages:
 
 
 
-          - task: TerraformInstaller@0
-
-            inputs:
-
-              terraformVersion: $(terraformVersion)
+          - template: templates/terraform-install.yml
 
 
 
