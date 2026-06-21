@@ -1,0 +1,95 @@
+# trigger:
+#   - main
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# variables:
+#   terraformVersion: "1.6.6"
+#   serviceConnection: "new-terraform-connection"
+#   -name: "environmrent"
+#   value: "dev"
+
+# stages:
+
+# # -------------------------
+# # PLAN STAGE
+# # -------------------------
+# - stage: Plan
+#   displayName: Terraform Plan
+#   jobs:
+#   - job: plan
+#     steps:
+#     - checkout: self
+#     - task: AzureCLI@2
+#       displayName: 'Terraform Plan'
+#       inputs:
+#         azureSubscription: $(serviceConnection)
+#         scriptType: bash
+#         scriptLocation: inlineScript
+#         workingDirectory: $(Build.SourcesDirectory)
+#         inlineScript: |
+#           set -e
+
+#           echo "Installing Terraform $(terraformVersion)"
+#           curl -fsSL https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip -o terraform.zip
+#           unzip terraform.zip
+#           sudo mv terraform /usr/local/bin/
+#           terraform version
+#           echo "Current directory:"
+#                       pwd
+#                       echo "Terraform files:"
+#                       find . -name "*.tf"
+#           echo "Running Terraform Init"
+#           terraform init
+
+#           echo "Running Terraform Validate"
+#           terraform validate
+
+#           echo "Running Terraform Plan"
+#           terraform plan -out=tfplan
+#     - publish: $(Build.SourcesDirectory)/tfplan
+#       artifact: terraformPlan
+
+# # -------------------------
+# # APPLY STAGE (APPROVAL)
+# # -------------------------
+# - stage: Apply
+#   displayName: Terraform Apply
+#   dependsOn: Plan
+#   condition: succeeded()
+
+#   jobs:
+#   - deployment: apply
+#     environment: terraform-approval
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - checkout: self
+#           - download: current
+#             artifact: terraformPlan
+#           - task: AzureCLI@2
+#             inputs:
+#               azureSubscription: $(serviceConnection)
+#               scriptType: bash
+#               scriptLocation: inlineScript
+#               workingDirectory: $(Build.SourcesDirectory)
+#               inlineScript: |
+#                 set -e
+#                 echo "Installing Terraform $(terraformVersion)"
+#                 curl -fsSL https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip -o terraform.zip
+#                 unzip terraform.zip
+#                  sudo mv terraform /usr/local/bin/
+#                 terraform version
+#                       echo "Current directory:"
+#                       pwd
+#                       echo "Terraform files:"
+#                       find . -name "*.tf"
+                      
+
+#                 echo "Re-initializing Terraform"
+#                 terraform init
+
+#                 echo "Applying Terraform changes"
+#                 terraform apply -auto-approve
