@@ -63,6 +63,7 @@ stages:
               azureSubscription: $(serviceConnection)
               scriptType: bash
               scriptLocation: inlineScript
+              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
               inlineScript: |
                 set -e
                 echo "Installing Terraform $(terraformVersion)"
@@ -70,6 +71,9 @@ stages:
                 unzip terraform.zip
                  sudo mv terraform /usr/local/bin/
                 terraform version
+                      echo "Current directory:"
+                      pwd
+                      ls -R
 
                 echo "Re-initializing Terraform"
                 terraform init
