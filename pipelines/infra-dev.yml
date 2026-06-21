@@ -159,30 +159,14 @@ pool:
 
 
 variables:
-
   terraformVersion: '1.6.6'
-
   serviceConnection: 'new-terraform-connection'
-
-
-
   backendResourceGroup: 'devops'
-
   backendStorageAccount: 'tfstate1781994399'
-
   backendContainer: 'tfstate'
-
   backendKey: 'dev.terraform.tfstate'
-
-
-
   workingDirectory: '$(Build.SourcesDirectory)/environments/dev'
-
-
-
 stages:
-
-
 
 # =====================================================
 
@@ -190,119 +174,42 @@ stages:
 
 # =====================================================
 
-
-
 - stage: Plan
-
   displayName: Terraform Plan
-
-
-
   jobs:
-
-
-
   - job: TerraformPlan
-
-
-
     steps:
-
-
-
     - checkout: self
-
-
-
     - template: templates/terraform-install.yml
-
-
-
     - task: TerraformTaskV4@4
-
       displayName: Terraform Init
-
-
-
       inputs:
-
         provider: 'azurerm'
-
         command: 'init'
-
-
-
         workingDirectory: $(workingDirectory)
-
-
-
         backendServiceArm: $(serviceConnection)
-
-
-
         backendAzureRmResourceGroupName: $(backendResourceGroup)
-
         backendAzureRmStorageAccountName: $(backendStorageAccount)
-
         backendAzureRmContainerName: $(backendContainer)
-
         backendAzureRmKey: $(backendKey)
-
-
-
         backendAzureRmUseEnvironmentVariablesForAuthentication: true
-
         backendAzureRmUseEntraIdForAuthentication: true
-
-
-
     - task: TerraformTaskV4@4
-
       displayName: Terraform Validate
-
-
-
       inputs:
-
         provider: 'azurerm'
-
         command: 'validate'
-
         workingDirectory: $(workingDirectory)
-
-
-
     - task: TerraformTaskV4@4
-
       displayName: Terraform Plan
-
-
-
       inputs:
-
         provider: 'azurerm'
-
         command: 'plan'
-
-
-
         workingDirectory: $(workingDirectory)
-
-
-
         environmentServiceNameAzureRM: $(serviceConnection)
-
-
-
         commandOptions: '-out=tfplan'
-
-
-
     - publish: $(workingDirectory)/tfplan
-
       artifact: terraformPlan
-
-
 
 # =====================================================
 
@@ -310,112 +217,41 @@ stages:
 
 # =====================================================
 
-
-
 - stage: Apply
-
-
-
   displayName: Terraform Apply
-
-
-
   dependsOn: Plan
-
-
-
   condition: succeeded()
-
-
-
   jobs:
-
-
-
   - deployment: TerraformApply
-
-
-
     displayName: Apply Terraform
-
-
-
     environment: terraform-dev-approval
-
-
-
     strategy:
-
-
-
       runOnce:
-
-
-
         deploy:
           steps:
-
-
-
           - checkout: self
-
-
-
           - download: current
-
             artifact: terraformPlan
-
-
-
           - template: templates/terraform-install.yml
-
-
-
           - task: TerraformTaskV4@4
-
             displayName: Terraform Init
-
-
-
             inputs:
-
               provider: 'azurerm'
-
               command: 'init'
-
-
-
               workingDirectory: $(workingDirectory)
-
-
-
               backendServiceArm: $(serviceConnection)
-
-
-
               backendAzureRmResourceGroupName: $(backendResourceGroup)
-
               backendAzureRmStorageAccountName: $(backendStorageAccount)
-
               backendAzureRmContainerName: $(backendContainer)
-
               backendAzureRmKey: $(backendKey)
-
-
-
               backendAzureRmUseEnvironmentVariablesForAuthentication: true
-
               backendAzureRmUseEntraIdForAuthentication: true
-
           - task: TerraformTaskV4@4
-
             displayName: Terraform Apply
-
             inputs:
-
               provider: 'azurerm'
               command: 'apply'
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
 
-              commandOptions: 'tfplan'
+              commandOptions: -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan'
