@@ -1,0 +1,12 @@
+steps:
+- script: |
+    echo "Installing Terraform $(terraformVersion)"
+
+    curl -fsSL https://releases.hashicorp.com/terraform/$(terraformVersion)/terraform_$(terraformVersion)_linux_amd64.zip -o terraform.zip
+
+    unzip -o terraform.zip
+
+    sudo mv terraform /usr/local/bin/
+
+    terraform version
+  displayName: Install Terraform

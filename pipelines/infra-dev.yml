@@ -1,0 +1,129 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  terraformVersion: "1.6.6"
+  serviceConnection: "new-terraform-connection"
+  environment: "dev"
+  workingDirectory: "$(Build.SourcesDirectory)/environments/dev"
+
+stages:
+
+# =========================================
+# PLAN STAGE
+# =========================================
+- stage: Plan
+  displayName: Terraform Plan
+
+  jobs:
+  - job: TerraformPlan
+    displayName: Run Terraform Plan
+
+    steps:
+
+    - checkout: self
+
+    # Install Terraform
+    - template: templates/terraform-install.yml
+
+    # Terraform Plan
+    - task: AzureCLI@2
+      displayName: Terraform Init Validate Plan
+
+      inputs:
+        azureSubscription: $(serviceConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        workingDirectory: $(workingDirectory)
+
+        inlineScript: |
+
+          set -e
+
+          echo "Environment: $(environment)"
+
+          echo "Current Directory:"
+          pwd
+
+          echo "Terraform Files:"
+          find . -name "*.tf"
+
+          echo "Running Terraform Init"
+          terraform init
+
+          echo "Running Terraform Validate"
+          terraform validate
+
+          echo "Running Terraform Plan"
+          terraform plan -out=tfplan
+
+    # Publish tfplan artifact
+    - publish: $(workingDirectory)/tfplan
+      artifact: terraformPlan
+
+    # Publish terraform configuration
+    - publish: $(workingDirectory)
+      artifact: terraformConfig
+
+# =========================================
+# APPLY STAGE
+# =========================================
+- stage: Apply
+  displayName: Terraform Apply
+
+  dependsOn: Plan
+  condition: succeeded()
+
+  jobs:
+
+  - deployment: TerraformApply
+
+    displayName: Apply Terraform Changes
+
+    environment: terraform-dev-approval
+
+    strategy:
+
+      runOnce:
+
+        deploy:
+
+          steps:
+
+          # Download artifacts
+          - download: current
+            artifact: terraformPlan
+
+          - download: current
+            artifact: terraformConfig
+
+          # Install Terraform
+          - template: templates/terraform-install.yml
+
+          # Terraform Apply
+          - task: AzureCLI@2
+            displayName: Terraform Apply
+
+            inputs:
+              azureSubscription: $(serviceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+
+              inlineScript: |
+
+                set -e
+
+                echo "Changing to Terraform Directory"
+
+                cd $(Pipeline.Workspace)/terraformConfig
+
+                echo "Running Terraform Init"
+
+                terraform init
+
+                echo "Applying Terraform Plan"
+
+                terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
