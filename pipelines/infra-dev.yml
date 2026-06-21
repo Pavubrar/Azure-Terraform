@@ -142,7 +142,7 @@
 
 #                 echo "Applying Terraform Plan"
 
-#                 terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
+#                 terraform apply -auto-approve 
 
 
 
@@ -254,4 +254,4 @@ stages:
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
 
-              commandOptions: -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan'
+                terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
