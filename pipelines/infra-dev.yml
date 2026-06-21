@@ -142,7 +142,7 @@
 
 #                 echo "Applying Terraform Plan"
 
-#                 terraform apply -auto-approve 
+#                 terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
 
 
 
@@ -159,6 +159,7 @@ pool:
 
 
 variables:
+
   terraformVersion: '1.6.6'
   serviceConnection: 'new-terraform-connection'
   backendResourceGroup: 'devops'
@@ -167,6 +168,8 @@ variables:
   backendKey: 'dev.terraform.tfstate'
   workingDirectory: '$(Build.SourcesDirectory)/environments/dev'
 stages:
+
+
 
 # =====================================================
 
@@ -254,4 +257,4 @@ stages:
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
 
-                terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
+              commandOptions: -auto-approve
