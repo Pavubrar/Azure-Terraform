@@ -1,6 +1,0 @@
-resource_group_name = "parveen-dev-rg1"
-location            = "Canada Central"
-environment         = "dev"
-owner               = "Parveen"
-app_name            = "terraformPractice"
-service_plan_name   = "parveen-app-plan"
