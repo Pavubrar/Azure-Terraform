@@ -20,11 +20,14 @@ stages:
   jobs:
   - job: plan
     steps:
+    - checkout: self
     - task: AzureCLI@2
+      displayName: 'Terraform Plan'
       inputs:
         azureSubscription: $(serviceConnection)
         scriptType: bash
         scriptLocation: inlineScript
+        workingDirectory: $(Build.SourcesDirectory)
         inlineScript: |
           set -e
 
@@ -33,7 +36,10 @@ stages:
           unzip terraform.zip
           sudo mv terraform /usr/local/bin/
           terraform version
-
+          echo "Current directory:"
+                      pwd
+                      echo "Terraform files:"
+                      find . -name "*.tf"
           echo "Running Terraform Init"
           terraform init
 
@@ -41,7 +47,9 @@ stages:
           terraform validate
 
           echo "Running Terraform Plan"
-          terraform plan
+          terraform plan -out=tfplan
+    - publish: $(Build.SourcesDirectory)/tfplan
+      artifact: terraformPlan
 
 # -------------------------
 # APPLY STAGE (APPROVAL)
@@ -58,12 +66,15 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
+          - download: current
+            artifact: terraformPlan
           - task: AzureCLI@2
             inputs:
               azureSubscription: $(serviceConnection)
               scriptType: bash
               scriptLocation: inlineScript
-              workingDirectory: $(System.DefaultWorkingDirectory)/terraform
+              workingDirectory: $(Build.SourcesDirectory)
               inlineScript: |
                 set -e
                 echo "Installing Terraform $(terraformVersion)"
@@ -73,7 +84,9 @@ stages:
                 terraform version
                       echo "Current directory:"
                       pwd
-                      ls -R
+                      echo "Terraform files:"
+                      find . -name "*.tf"
+                      
 
                 echo "Re-initializing Terraform"
                 terraform init
