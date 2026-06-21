@@ -1,145 +1,429 @@
+# trigger:
+#   - main
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# variables:
+#   terraformVersion: "1.6.6"
+#   serviceConnection: "new-terraform-connection"
+#   environment: "dev"
+#   workingDirectory: "$(Build.SourcesDirectory)/environments/dev"
+
+# stages:
+
+# # =========================================
+# # PLAN STAGE
+# # =========================================
+# - stage: Plan
+#   displayName: Terraform Plan
+
+#   jobs:
+#   - job: TerraformPlan
+#     displayName: Run Terraform Plan
+
+#     steps:
+
+#     - checkout: self
+
+#     # Install Terraform
+#     - template: templates/terraform-install.yml
+
+#     # Terraform Plan
+#     - task: TerraformTaskV@4
+#       displayName: Terraform Init Validate Plan
+
+#       inputs:
+#         azureSubscription: $(serviceConnection)
+#         scriptType: bash
+#         scriptLocation: inlineScript
+#         workingDirectory: $(workingDirectory)
+#         addSpnToEnvironment: true
+#         inlineScript: |
+
+#           set -e
+
+#           echo "Environment: $(environment)"
+
+#           echo "Current Directory:"
+#           pwd
+
+#           echo "Terraform Files:"
+#           find . -name "*.tf"
+#           export ARM_USE_OIDC=true
+#           export ARM_CLIENT_ID=$servicePrincipalId
+#           export ARM_TENANT_ID=$tenantId
+#           export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+#           echo "====backend files===="
+#           cat backend.tf
+
+#           echo "====azure login===="
+#           az account show
+#           echo "apn id = $servicePrincipleId"
+#           echo "tenant=$tenantId"
+#           echo "SUB=$(az account show --query id -o tsv)"
+#           rm -rf .terraform
+#           echo "Running Terraform Init"
+#           terraform init --reconfigure
+
+#           echo "Running Terraform Validate"
+#           terraform validate
+
+#           echo "Running Terraform Plan"
+#           terraform plan -out=tfplan
+
+#     # Publish tfplan artifact
+#     - publish: $(workingDirectory)/tfplan
+#       artifact: terraformPlan
+
+#     # Publish terraform configuration
+#     - publish: $(workingDirectory)
+#       artifact: terraformConfig
+
+# # =========================================
+# # APPLY STAGE
+# # =========================================
+# - stage: Apply
+#   displayName: Terraform Apply
+
+#   dependsOn: Plan
+#   condition: succeeded()
+
+#   jobs:
+
+#   - deployment: TerraformApply
+
+#     displayName: Apply Terraform Changes
+
+#     environment: terraform-dev-approval
+
+#     strategy:
+
+#       runOnce:
+
+#         deploy:
+
+#           steps:
+
+#           # Download artifacts
+#           - download: current
+#             artifact: terraformPlan
+
+#           - download: current
+#             artifact: terraformConfig
+
+#           # Install Terraform
+#           - template: templates/terraform-install.yml
+
+#           # Terraform Apply
+#           - task: AzureCLI@2
+#             displayName: Terraform Apply
+
+#             inputs:
+#               azureSubscription: $(serviceConnection)
+#               scriptType: bash
+#               scriptLocation: inlineScript
+#               # addSpnToEnvironment: true
+#               inlineScript: |
+
+#                 set -e
+
+#                 echo "Changing to Terraform Directory"
+
+#                 cd $(Pipeline.Workspace)/terraformConfig
+#                 # export ARM_USE_OIDC=true
+#                 # export ARM_CLIENT_ID=$servicePrincipalId
+#                 #  export ARM_TENANT_ID=$tenantId
+#                 # export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+
+#                 echo "Running Terraform Init"
+
+#                 terraform init
+
+#                 echo "Applying Terraform Plan"
+
+#                 terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
+
+
+
 trigger:
-  - main
+
+- main
+
+
 
 pool:
+
   vmImage: ubuntu-latest
 
+
+
 variables:
-  terraformVersion: "1.6.6"
-  serviceConnection: "new-terraform-connection"
-  environment: "dev"
-  workingDirectory: "$(Build.SourcesDirectory)/environments/dev"
+
+  terraformVersion: '1.6.6'
+
+  serviceConnection: 'new-terraform-connection'
+
+
+
+  backendResourceGroup: 'devops'
+
+  backendStorageAccount: 'tfstate1781994399'
+
+  backendContainer: 'tfstate'
+
+  backendKey: 'dev.terraform.tfstate'
+
+
+
+  workingDirectory: '$(Build.SourcesDirectory)/environments/dev'
+
+
 
 stages:
 
-# =========================================
-# PLAN STAGE
-# =========================================
+
+
+# =====================================================
+
+# PLAN
+
+# =====================================================
+
+
+
 - stage: Plan
+
   displayName: Terraform Plan
 
+
+
   jobs:
+
+
+
   - job: TerraformPlan
-    displayName: Run Terraform Plan
+
+
 
     steps:
 
+
+
     - checkout: self
 
-    # Install Terraform
-    - template: templates/terraform-install.yml
 
-    # Terraform Plan
-    - task: AzureCLI@2
-      displayName: Terraform Init Validate Plan
+
+    - task: TerraformInstaller@0
 
       inputs:
-        azureSubscription: $(serviceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
+
+        terraformVersion: $(terraformVersion)
+
+
+
+    - task: TerraformTaskV4@4
+
+      displayName: Terraform Init
+
+
+
+      inputs:
+
+        provider: 'azurerm'
+
+        command: 'init'
+
+
+
         workingDirectory: $(workingDirectory)
-        addSpnToEnvironment: true
-        inlineScript: |
 
-          set -e
 
-          echo "Environment: $(environment)"
 
-          echo "Current Directory:"
-          pwd
+        backendServiceArm: $(serviceConnection)
 
-          echo "Terraform Files:"
-          find . -name "*.tf"
-          export ARM_USE_OIDC=true
-          export ARM_CLIENT_ID=$servicePrincipalId
-          export ARM_TENANT_ID=$tenantId
-          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-          echo "====backend files===="
-          cat backend.tf
 
-          echo "====azure login===="
-          az account show
-          echo "apn id = $servicePrincipleId"
-          echo "tenant=$tenantId"
-          echo "SUB=$(az account show --query id -o tsv)"
-          rm -rf .terraform
-          echo "Running Terraform Init"
-          terraform init --reconfigure
 
-          echo "Running Terraform Validate"
-          terraform validate
+        backendAzureRmResourceGroupName: $(backendResourceGroup)
 
-          echo "Running Terraform Plan"
-          terraform plan -out=tfplan
+        backendAzureRmStorageAccountName: $(backendStorageAccount)
 
-    # Publish tfplan artifact
+        backendAzureRmContainerName: $(backendContainer)
+
+        backendAzureRmKey: $(backendKey)
+
+
+
+        backendAzureRmUseEnvironmentVariablesForAuthentication: true
+
+        backendAzureRmUseEntraIdForAuthentication: true
+
+
+
+    - task: TerraformTaskV4@4
+
+      displayName: Terraform Validate
+
+
+
+      inputs:
+
+        provider: 'azurerm'
+
+        command: 'validate'
+
+        workingDirectory: $(workingDirectory)
+
+
+
+    - task: TerraformTaskV4@4
+
+      displayName: Terraform Plan
+
+
+
+      inputs:
+
+        provider: 'azurerm'
+
+        command: 'plan'
+
+
+
+        workingDirectory: $(workingDirectory)
+
+
+
+        environmentServiceNameAzureRM: $(serviceConnection)
+
+
+
+        commandOptions: '-out=tfplan'
+
+
+
     - publish: $(workingDirectory)/tfplan
+
       artifact: terraformPlan
 
-    # Publish terraform configuration
-    - publish: $(workingDirectory)
-      artifact: terraformConfig
 
-# =========================================
-# APPLY STAGE
-# =========================================
+
+# =====================================================
+
+# APPLY
+
+# =====================================================
+
+
+
 - stage: Apply
+
+
+
   displayName: Terraform Apply
 
+
+
   dependsOn: Plan
+
+
+
   condition: succeeded()
+
+
 
   jobs:
 
+
+
   - deployment: TerraformApply
 
-    displayName: Apply Terraform Changes
+
+
+    displayName: Apply Terraform
+
+
 
     environment: terraform-dev-approval
 
+
+
     strategy:
+
+
 
       runOnce:
 
-        deploy:
 
+
+        deploy:
           steps:
 
-          # Download artifacts
+
+
+          - checkout: self
+
+
+
           - download: current
+
             artifact: terraformPlan
 
-          - download: current
-            artifact: terraformConfig
 
-          # Install Terraform
-          - template: templates/terraform-install.yml
 
-          # Terraform Apply
-          - task: AzureCLI@2
+          - task: TerraformInstaller@0
+
+            inputs:
+
+              terraformVersion: $(terraformVersion)
+
+
+
+          - task: TerraformTaskV4@4
+
+            displayName: Terraform Init
+
+
+
+            inputs:
+
+              provider: 'azurerm'
+
+              command: 'init'
+
+
+
+              workingDirectory: $(workingDirectory)
+
+
+
+              backendServiceArm: $(serviceConnection)
+
+
+
+              backendAzureRmResourceGroupName: $(backendResourceGroup)
+
+              backendAzureRmStorageAccountName: $(backendStorageAccount)
+
+              backendAzureRmContainerName: $(backendContainer)
+
+              backendAzureRmKey: $(backendKey)
+
+
+
+              backendAzureRmUseEnvironmentVariablesForAuthentication: true
+
+              backendAzureRmUseEntraIdForAuthentication: true
+
+          - task: TerraformTaskV4@4
+
             displayName: Terraform Apply
 
             inputs:
-              azureSubscription: $(serviceConnection)
-              scriptType: bash
-              scriptLocation: inlineScript
-              # addSpnToEnvironment: true
-              inlineScript: |
 
-                set -e
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: $(workingDirectory)
+              environmentServiceNameAzureRM: $(serviceConnection)
 
-                echo "Changing to Terraform Directory"
-
-                cd $(Pipeline.Workspace)/terraformConfig
-                # export ARM_USE_OIDC=true
-                # export ARM_CLIENT_ID=$servicePrincipalId
-                #  export ARM_TENANT_ID=$tenantId
-                # export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-
-                echo "Running Terraform Init"
-
-                terraform init
-
-                echo "Applying Terraform Plan"
-
-                terraform apply -auto-approve $(Pipeline.Workspace)/terraformPlan/tfplan
+              commandOptions: 'tfplan'
