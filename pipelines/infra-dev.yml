@@ -38,7 +38,7 @@ stages:
         scriptType: bash
         scriptLocation: inlineScript
         workingDirectory: $(workingDirectory)
-        # addSpnToEnvironment: true
+        addSpnToEnvironment: true
         inlineScript: |
 
           set -e
@@ -50,13 +50,21 @@ stages:
 
           echo "Terraform Files:"
           find . -name "*.tf"
-          # export ARM_USE_OIDC=true
-          # export ARM_CLIENT_ID=$servicePrincipalId
-          # export ARM_TENANT_ID=$tenantId
-          # export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          export ARM_USE_OIDC=true
+          export ARM_CLIENT_ID=$servicePrincipalId
+          export ARM_TENANT_ID=$tenantId
+          export ARM_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          echo "====backend files===="
+          cat backend.tf
 
+          echo "====azure login===="
+          az account show
+          echo "apn id = $servicePrincipleId"
+          echo "tenant=$tenantId"
+          echo "SUB=$(az account show --query id -o tsv)"
+          rm -rf .terraform
           echo "Running Terraform Init"
-          terraform init
+          terraform init --reconfigure
 
           echo "Running Terraform Validate"
           terraform validate
