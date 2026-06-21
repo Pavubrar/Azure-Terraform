@@ -13,3 +13,10 @@ variable "environment" {
 variable "owner" {
   type = string
 }
+variable "app_name" {
+  type = string
+}
+
+variable "service_plan_name" {
+  type = string
+}
