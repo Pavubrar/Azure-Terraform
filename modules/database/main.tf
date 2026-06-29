@@ -8,6 +8,12 @@ resource "azurerm_mssql_server" "this" {
   azuread_administrator {
     login_username = var.aad_admin_username
     object_id      = var.aad_admin_object_id
+
+    azuread_authentication_only = true
+
+  }
+   identity {
+    type = "SystemAssigned"
   }
 
   tags = var.tags

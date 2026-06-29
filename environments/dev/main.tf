@@ -23,8 +23,8 @@ module "app_service" {
 module "storage" {
   source = "../../modules/storage"
 
-  name                = "mystorageprod"
-  resource_group_name = "rg-prod"
+  name                = "csharpdq43cm"
+  resource_group_name = "devops"
   location            = "Canada Central"
 }
 
@@ -42,7 +42,7 @@ module "database" {
 
   server_name         = "bookshelf"
   resource_group_name = "BookApp"
-  database_name       = "free-sql-db-3528898 bookshelf/free-sql-db-3528898" 
+  database_name       = "free-sql-db-3528898" 
   location            = "Canada Central"
 
   aad_admin_username  = "admin@MngEnvMCAP517100.onmicrosoft.com"

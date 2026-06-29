@@ -7,6 +7,7 @@ resource "azurerm_storage_account" "this" {
   account_replication_type = "LRS"
 
   min_tls_version          = "TLS1_2"
+   shared_access_key_enabled = false
 
   tags = var.tags
 }
