@@ -20,7 +20,34 @@ module "app_service" {
   resource_group_name = module.resource_group.resource_group_name
 }
 
+module "storage" {
+  source = "../../modules/storage"
 
+  name                = "mystorageprod"
+  resource_group_name = "rg-prod"
+  location            = "Canada Central"
+}
+
+module "key_vault" {
+  source = "../../modules/key_vault"
+
+  name                = "kv-prod"
+  resource_group_name = "rg-prod"
+  location            = "Canada Central"
+  tenant_id           = var.tenant_id
+}
+
+module "database" {
+  source = "../../modules/database"
+
+  server_name         = "bookshelf"
+  resource_group_name = "BookApp"
+  database_name       = "free-sql-db-3528898 bookshelf/free-sql-db-3528898" 
+  location            = "Canada Central"
+
+  aad_admin_username  = "admin@MngEnvMCAP517100.onmicrosoft.com"
+  aad_admin_object_id  = "d10c1b64-74e2-4205-b3af-6d24d28ca6c8"
+}
 
 
 

@@ -20,3 +20,15 @@ variable "app_name" {
 variable "service_plan_name" {
   type = string
 }
+variable "tenant_id" {
+  type = string
+}
+
+variable "sql_admin" {
+  type = string
+}
+
+variable "sql_password" {
+  type      = string
+  sensitive = true
+}
