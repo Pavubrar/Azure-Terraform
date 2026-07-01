@@ -23,7 +23,7 @@ resource "azurerm_mssql_database" "this" {
   name      = var.database_name
   server_id = azurerm_mssql_server.this.id
 
-  sku_name = "S0"
-
+  sku_name = "GP_S_Gen5_2"
+storage_account_type = "Local"
   tags = var.tags
 }

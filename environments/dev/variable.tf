@@ -13,7 +13,7 @@ variable "environment" {
 variable "owner" {
   type = string
 }
-variable "app_name" {
+variable "service_plan_id" {
   type = string
 }
 
@@ -31,4 +31,17 @@ variable "sql_admin" {
 variable "sql_password" {
   type      = string
   sensitive = true
+}
+variable "backend_app_name" {
+  type = string
+}
+
+variable "frontend_app_name" {
+  type = string
+}
+variable "sku_name" {
+  type = string
+}
+variable "storageAcc_name"{
+  type = string
 }

@@ -1,52 +1,65 @@
 
-module "resource_group" {
-  source = "../../modules/resource_group"
+# module "resource_group" {
+#   source = "../../modules/resource_group"
 
-  name     = var.resource_group_name
-  location = var.location
+#   name     = var.resource_group_name
+#   location = var.location
 
-  tags = {
-    environment = var.environment
-    owner       = var.owner
-  }
-}
+#   tags = {
+#     environment = var.environment
+#     owner       = var.owner
+#   }
+# }
 
 module "app_service" {
   source = "../../modules/app_service"
 
-  app_name            = var.app_name
+  app_name            = var.backend_app_name
   service_plan_name   = var.service_plan_name
   location            = var.location
-  resource_group_name = module.resource_group.resource_group_name
+  resource_group_name = var.resource_group_name
+  sku_name            = var.sku_name
+  service_plan_id = var.service_plan_id
 }
 
+module "frontend" {
+  source = "../../modules/app_service"
+
+  app_name            = var.frontend_app_name
+  service_plan_name   = var.service_plan_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku_name            = var.sku_name
+  service_plan_id = var.service_plan_id
+   
+}
 module "storage" {
   source = "../../modules/storage"
 
-  name                = "csharpdq43cm"
-  resource_group_name = "devops"
-  location            = "Canada Central"
+  name                = var.storageAcc_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
 }
 
-module "key_vault" {
-  source = "../../modules/key_vault"
+# module "key_vault" {
+#   source = "../../modules/key_vault"
 
-  name                = "kv-prod"
-  resource_group_name = "rg-prod"
-  location            = "Canada Central"
-  tenant_id           = var.tenant_id
-}
+#   name                = "kv-prod"
+#   resource_group_name = "rg-prod"
+#   location            = "Canada Central"
+#   tenant_id           = var.tenant_id
+# }
 
 module "database" {
   source = "../../modules/database"
 
   server_name         = "bookshelf"
   resource_group_name = "BookApp"
-  database_name       = "free-sql-db-3528898" 
+  database_name       = "free-sql-db-3528898"
   location            = "Canada Central"
 
   aad_admin_username  = "admin@MngEnvMCAP517100.onmicrosoft.com"
-  aad_admin_object_id  = "d10c1b64-74e2-4205-b3af-6d24d28ca6c8"
+  aad_admin_object_id = "d10c1b64-74e2-4205-b3af-6d24d28ca6c8"
 }
 
 

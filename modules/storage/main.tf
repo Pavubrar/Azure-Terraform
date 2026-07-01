@@ -10,4 +10,9 @@ resource "azurerm_storage_account" "this" {
    shared_access_key_enabled = false
 
   tags = var.tags
+
+  # lifecyce to recover rg name diffrentiate devopsto DevOps
+  lifecycle {
+     ignore_changes = all  
+     }
 }
