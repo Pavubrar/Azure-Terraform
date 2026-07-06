@@ -63,6 +63,19 @@ module "database" {
 }
 
 
+module "network" {
+  source = "../../modules/network"
+
+  vnet_name          = "dev-vnet"
+  resource_group_name = "DevOps"
+  location           = "Canada Central"
+
+  tags = {
+    environment = "dev"
+    managed_by  = "terraform"
+  }
+}
+
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
 # module "resource_group" {
