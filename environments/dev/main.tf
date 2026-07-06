@@ -75,6 +75,27 @@ module "network" {
     managed_by  = "terraform"
   }
 }
+#-----Private endpoint for SQL---#
+module "sql_private_endpoint" {
+  source = "../../modules/network/private-endpoint"
+
+  name                = "sql-pep"
+  location            = "Canada Central"
+  resource_group_name = "DevOps"
+
+  subnet_id = module.network.private_endpoint_subnet_id
+  vnet_id   = module.network.vnet_id
+
+  private_connection_resource_id = module.database.sql_server_id
+
+  subresource_names = ["sqlServer"]
+
+  private_dns_zone_name = "privatelink.database.windows.net"
+
+  tags = {
+    environment = "dev"
+  }
+}
 
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
