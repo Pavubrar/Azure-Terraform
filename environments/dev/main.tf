@@ -98,6 +98,27 @@ module "sql_private_endpoint" {
   }
 }
 
+module "storage_private_endpoint" {
+  source = "../../modules/network/private-endpoint"
+
+  name                = "storage"
+  location            = "Canada Central"
+  resource_group_name = "DevOps"
+
+  subnet_id = module.network.private_endpoint_subnet_id
+  vnet_id   = module.network.vnet_id
+
+  private_connection_resource_id = module.storage.storage_account_id
+
+  subresource_names = ["blob"]
+
+  private_dns_zone_name = "privatelink.blob.core.windows.net"
+
+  tags = {
+    environment = "dev"
+  }
+}
+
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
 # module "resource_group" {
