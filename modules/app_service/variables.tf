@@ -21,3 +21,7 @@ variable "sku_name" {
   type    = string
   
 }
+variable "app_subnet_id" {
+  type    = string
+  default = null
+}
