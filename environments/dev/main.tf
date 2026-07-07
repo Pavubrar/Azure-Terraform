@@ -135,8 +135,10 @@ module "vm" {
 
   admin_username = "azureuser"
 
-  public_key = file(var.ssh_public_key_path) #--later will add this ssh into seciriyt file in devops
-}
+  public_key = file(var.ssh_public_key_path) 
+#--later will add this ssh into seciriyt file in devops
+
+}  
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
 # module "resource_group" {
