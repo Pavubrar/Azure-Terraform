@@ -59,6 +59,14 @@ resource "azurerm_subnet" "gateway" {
   address_prefixes = ["10.0.3.0/24"]
 }
 
+
+resource "azurerm_virtual_network" "mgmt" {
+  name                = "vnet-mgmt"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  address_space = ["10.1.0.0/16"]
+}
 # -----------------------------
 # VM SUBNET
 # -----------------------------
@@ -66,7 +74,36 @@ resource "azurerm_subnet" "gateway" {
 resource "azurerm_subnet" "vm" {
   name                 = "vm-subnet"
   resource_group_name  = var.resource_group_name
-  virtual_network_name = azurerm_virtual_network.this.name
+  virtual_network_name = azurerm_virtual_network.mgmt.name
 
   address_prefixes = ["10.0.4.0/24"]
+}
+# -----------------------------
+# VM NSG
+# -----------------------------
+
+resource "azurerm_network_security_group" "vm" {
+  name                = "vm-nsg"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  security_rule {
+  name                       = "Allow-SSH"
+  priority                   = 100
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+
+  source_port_range          = "*"
+  destination_port_range     = "22"
+
+  source_address_prefix      = "52.229.10.150"
+
+  destination_address_prefix = "*"
+}
+}
+resource "azurerm_subnet_network_security_group_association" "vm" {
+
+  subnet_id                 = azurerm_subnet.vm.id
+
+  network_security_group_id = azurerm_network_security_group.vm.id
 }

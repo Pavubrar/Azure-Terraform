@@ -42,6 +42,9 @@ variable "frontend_app_name" {
 variable "sku_name" {
   type = string
 }
-variable "storageAcc_name"{
+variable "storageAcc_name" {
+  type = string
+}
+variable "ssh_public_key_path" {
   type = string
 }

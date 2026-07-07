@@ -19,8 +19,10 @@ module "app_service" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = var.sku_name
-  service_plan_id = var.service_plan_id
-  app_subnet_id = module.network.app_subnet_id
+  service_plan_id     = var.service_plan_id
+  enable_vnet_integration = false
+  app_subnet_id       = module.network.app_subnet_id
+
 }
 
 module "frontend" {
@@ -31,8 +33,9 @@ module "frontend" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku_name            = var.sku_name
-  service_plan_id = var.service_plan_id
-   
+  service_plan_id     = var.service_plan_id
+  enable_vnet_integration = false
+
 }
 module "storage" {
   source = "../../modules/storage"
@@ -67,9 +70,9 @@ module "database" {
 module "network" {
   source = "../../modules/network"
 
-  vnet_name          = "dev-vnet"
+  vnet_name           = "dev-vnet"
   resource_group_name = "DevOps"
-  location           = "Canada Central"
+  location            = "Canada Central"
 
   tags = {
     environment = "dev"
@@ -119,6 +122,21 @@ module "storage_private_endpoint" {
   }
 }
 
+module "vm" {
+
+  source = "../../modules/vm"
+
+  vm_name = "mgmt-vm"
+
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  subnet_id = module.network.vm_subnet_id
+
+  admin_username = "azureuser"
+
+  public_key = file(var.ssh_public_key_path) #--later will add this ssh into seciriyt file in devops
+}
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
 # module "resource_group" {

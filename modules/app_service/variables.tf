@@ -21,6 +21,12 @@ variable "sku_name" {
   type    = string
   
 }
+
+variable "enable_vnet_integration" {
+  type    = bool
+  default = false
+}
+
 variable "app_subnet_id" {
   type    = string
   default = null
