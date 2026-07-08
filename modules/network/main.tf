@@ -107,3 +107,25 @@ resource "azurerm_subnet_network_security_group_association" "vm" {
 
   network_security_group_id = azurerm_network_security_group.vm.id
 }
+
+#---VNET PEERing---#
+resource "azurerm_virtual_network_peering" "app_to_mgmt" {
+  name                      = "app-to-mgmt"
+  resource_group_name       = var.resource_group_name
+
+  virtual_network_name      = azurerm_virtual_network.this.name
+
+  remote_virtual_network_id = azurerm_virtual_network.mgmt.id
+
+  allow_virtual_network_access = true
+}
+resource "azurerm_virtual_network_peering" "mgmt_to_app" {
+  name                      = "mgmt-to-app"
+  resource_group_name       = var.resource_group_name
+
+  virtual_network_name      = azurerm_virtual_network.mgmt.name
+
+  remote_virtual_network_id = azurerm_virtual_network.this.id
+
+  allow_virtual_network_access = true
+}

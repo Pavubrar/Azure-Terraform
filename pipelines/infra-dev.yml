@@ -184,6 +184,11 @@ stages:
     steps:
     - checkout: self
     - template: templates/terraform-install.yml
+    - task: DownloadSecureFile@1
+      name: sshkey
+      displayName: Download SSH Public Key
+  inputs:
+    secureFile: 'azure_vm_key.pub'
     - task: TerraformTaskV4@4
       displayName: Terraform Init
       inputs:
@@ -210,7 +215,9 @@ stages:
         command: 'plan'
         workingDirectory: $(workingDirectory)
         environmentServiceNameAzureRM: $(serviceConnection)
-        commandOptions: '-out=tfplan'
+        commandOptions: >
+         -var="ssh_public_key_path=$(sshkey.secureFilePath)"10     
+         -out=tfplan
     - publish: $(workingDirectory)/tfplan
       artifact: terraformPlan
 
@@ -236,6 +243,11 @@ stages:
           - download: current
             artifact: terraformPlan
           - template: templates/terraform-install.yml
+          - task: DownloadSecureFile@1
+            name: sshkey
+            displayName: Download SSH Public Key
+            inputs:
+              secureFile: 'azure_vm_key.pub'
           - task: TerraformTaskV4@4
             displayName: Terraform Init
             inputs:
@@ -257,4 +269,6 @@ stages:
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
 
-              commandOptions: -auto-approve
+               commandOptions: >
+                -var="ssh_public_key_path=$(sshkey.secureFilePath)"
+                -auto-approve
