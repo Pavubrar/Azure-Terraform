@@ -268,8 +268,7 @@ stages:
               command: 'apply'
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
-
-               commandOptions: >
+              commandOptions: >
                 -var="ssh_public_key_path=$(sshkey.secureFilePath)"
                 -auto-approve
             
