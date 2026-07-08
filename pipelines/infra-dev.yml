@@ -268,9 +268,5 @@ stages:
               command: 'apply'
               workingDirectory: $(workingDirectory)
               environmentServiceNameAzureRM: $(serviceConnection)
-<<<<<<< HEAD
 
                commandOptions: '-auto-approve'
-=======
-              commandOptions: '-auto-approve'
->>>>>>> ce10723649bef1dd5cdab1eb8762d9c9f97d83cb
