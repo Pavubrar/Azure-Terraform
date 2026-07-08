@@ -20,7 +20,7 @@ module "app_service" {
   resource_group_name     = var.resource_group_name
   sku_name                = var.sku_name
   service_plan_id         = var.service_plan_id
-  enable_vnet_integration = false
+  enable_vnet_integration = true
   app_subnet_id           = module.network.app_subnet_id
 
 }

@@ -10,7 +10,7 @@ resource "azurerm_private_dns_zone" "this" {
 }
 
 # ---------------------------------
-# DNS LINK TO VNET
+# DNS LINK TO VNET for app to private endpoints
 # ---------------------------------
 
 resource "azurerm_private_dns_zone_virtual_network_link" "this" {
@@ -23,6 +23,12 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
   registration_enabled = false
 
   tags = var.tags
+}
+resource "azurerm_private_dns_zone_virtual_network_link" "sql_dns_mgmt {
+  name                  = "sql-pep-dns-link"
+  resource_group_name   = "DevOps"
+  private_dns_zone_name = "privatelink.database.windows.net"
+  virtual_network_id    = azurerm_virtual_network.vnet_mgmt.id
 }
 
 # ---------------------------------
