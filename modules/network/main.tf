@@ -76,7 +76,7 @@ resource "azurerm_subnet" "vm" {
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.mgmt.name
 
-  address_prefixes = ["10.0.4.0/24"]
+  address_prefixes = ["10.1.1.0/24"]
 }
 # -----------------------------
 # VM NSG
@@ -96,7 +96,7 @@ resource "azurerm_network_security_group" "vm" {
   source_port_range          = "*"
   destination_port_range     = "22"
 
-  source_address_prefix      = "52.229.10.150"
+  source_address_prefix      = "52.229.10.150/32"
 
   destination_address_prefix = "*"
 }

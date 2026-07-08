@@ -14,26 +14,26 @@
 module "app_service" {
   source = "../../modules/app_service"
 
-  app_name            = var.backend_app_name
-  service_plan_name   = var.service_plan_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku_name            = var.sku_name
-  service_plan_id     = var.service_plan_id
+  app_name                = var.backend_app_name
+  service_plan_name       = var.service_plan_name
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  sku_name                = var.sku_name
+  service_plan_id         = var.service_plan_id
   enable_vnet_integration = false
-  app_subnet_id       = module.network.app_subnet_id
+  app_subnet_id           = module.network.app_subnet_id
 
 }
 
 module "frontend" {
   source = "../../modules/app_service"
 
-  app_name            = var.frontend_app_name
-  service_plan_name   = var.service_plan_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  sku_name            = var.sku_name
-  service_plan_id     = var.service_plan_id
+  app_name                = var.frontend_app_name
+  service_plan_name       = var.service_plan_name
+  location                = var.location
+  resource_group_name     = var.resource_group_name
+  sku_name                = var.sku_name
+  service_plan_id         = var.service_plan_id
   enable_vnet_integration = false
 
 }
@@ -135,10 +135,10 @@ module "vm" {
 
   admin_username = "azureuser"
 
-  public_key = file(var.ssh_public_key_path) 
-#--later will add this ssh into seciriyt file in devops
+  public_key = file(var.ssh_public_key_path)
+  #--later will add this ssh into seciriyt file in devops
 
-}  
+}
 
 # =========== simple boiler plate kind of setup to create rg and web app i azure app services"
 # module "resource_group" {
