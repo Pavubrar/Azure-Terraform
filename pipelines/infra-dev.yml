@@ -187,13 +187,9 @@ stages:
     - task: DownloadSecureFile@1
       name: sshkey
       displayName: Download SSH Public Key
-<<<<<<< HEAD
       inputs:
         secureFile: 'azure_vm_key.pub'
-=======
-  inputs:
-    secureFile: 'azure_vm_key.pub'
->>>>>>> 6fb280c ( pipeline  is fetching from secire file instead locally)
+
     - task: TerraformTaskV4@4
       displayName: Terraform Init
       inputs:
@@ -221,11 +217,7 @@ stages:
         workingDirectory: $(workingDirectory)
         environmentServiceNameAzureRM: $(serviceConnection)
         commandOptions: >
-<<<<<<< HEAD
          -var="ssh_public_key_path=$(sshkey.secureFilePath)"    
-=======
-         -var="ssh_public_key_path=$(sshkey.secureFilePath)"10     
->>>>>>> 6fb280c ( pipeline  is fetching from secire file instead locally)
          -out=tfplan
     - publish: $(workingDirectory)/tfplan
       artifact: terraformPlan
@@ -279,9 +271,6 @@ stages:
               environmentServiceNameAzureRM: $(serviceConnection)
               commandOptions: >
                 -var="ssh_public_key_path=$(sshkey.secureFilePath)"
-<<<<<<< HEAD
                 -auto-approve
             
-=======
-                -auto-approve
->>>>>>> 6fb280c ( pipeline  is fetching from secire file instead locally)
+

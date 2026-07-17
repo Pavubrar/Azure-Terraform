@@ -17,3 +17,7 @@ output "gateway_subnet_id" {
 output "vm_subnet_id" {
   value = azurerm_subnet.vm.id
 }
+output "mgmt_vnet_id" {
+    value = azurerm_virtual_network.mgmt.id
+    }
+ 

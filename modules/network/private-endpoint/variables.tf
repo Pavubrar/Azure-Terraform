@@ -20,3 +20,6 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+variable "mgmt_vnet_id" {
+  type = string
+}

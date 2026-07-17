@@ -89,7 +89,7 @@ module "sql_private_endpoint" {
 
   subnet_id = module.network.private_endpoint_subnet_id
   vnet_id   = module.network.vnet_id
-
+  mgmt_vnet_id = module.network.mgmt_vnet_id
   private_connection_resource_id = module.database.sql_server_id
 
   subresource_names = ["sqlServer"]
@@ -110,7 +110,7 @@ module "storage_private_endpoint" {
 
   subnet_id = module.network.private_endpoint_subnet_id
   vnet_id   = module.network.vnet_id
-
+  mgmt_vnet_id = module.network.mgmt_vnet_id
   private_connection_resource_id = module.storage.storage_account_id
 
   subresource_names = ["blob"]

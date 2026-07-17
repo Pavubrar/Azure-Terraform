@@ -24,11 +24,11 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
 
   tags = var.tags
 }
-resource "azurerm_private_dns_zone_virtual_network_link" "sql_dns_mgmt {
+resource "azurerm_private_dns_zone_virtual_network_link" "sql_dns_mgmt" {
   name                  = "sql-pep-dns-link"
   resource_group_name   = "DevOps"
   private_dns_zone_name = "privatelink.database.windows.net"
-  virtual_network_id    = azurerm_virtual_network.vnet_mgmt.id
+  virtual_network_id    = var.mgmt_vnet_id
 }
 
 # ---------------------------------
@@ -55,6 +55,5 @@ resource "azurerm_private_endpoint" "this" {
     name                 = "${var.name}-dns-group"
     private_dns_zone_ids = [azurerm_private_dns_zone.this.id]
   }
-
   tags = var.tags
 }
