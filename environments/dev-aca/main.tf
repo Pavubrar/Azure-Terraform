@@ -20,3 +20,14 @@ module "container_app_environment" {
   location            = module.resource_group.resource_group_location
   resource_group_name = module.resource_group.resource_group_name
 }
+module "managed_identity" {
+  source = "../../modules/managed_identity"
+  name                = "bookshelf-api-identity"
+  location            = module.resource_group.resource_group_location
+  resource_group_name = module.resource_group.resource_group_name}
+
+resource "azurerm_role_assignment" "acr_pull" {
+  principal_id         = identity.principal_id
+  role_definition_name = "AcrPull"
+  scope                = acr.id
+}
