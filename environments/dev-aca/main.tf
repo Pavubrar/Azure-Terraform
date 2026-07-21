@@ -44,4 +44,6 @@ module "container_app_api" {
   registry_server = module.acr.login_server
 
   image = var.api_image
+  sql_connection_string = var.sql_connection_string
+  jwt_key = var.jwt_key
 }

@@ -29,3 +29,10 @@ variable "api_container_name" {
 variable "api_image" {
   type = string
 }
+variable "sql_connection_string" {
+  sensitive = true
+}
+
+variable "jwt_key" {
+  sensitive = true
+}

@@ -16,18 +16,46 @@ resource "azurerm_container_app" "api" {
 
   template {
 
-    container {
-      name   = "bookshelf-api"
-      image  = var.image
-      cpu    = 0.5
-      memory = "1Gi"
-
-      env {
+  container {
+  name   = "bookshelf-api"
+  image  = var.image
+  cpu    = 0.5
+  memory = "1Gi"
+  env {
         name  = "ASPNETCORE_ENVIRONMENT"
         value = "Production"
       }
-    }
+  env {
+    name  = "ConnectionStrings__DefaultConnection"
+    value = var.sql_connection_string
   }
+
+  env {
+    name  = "Jwt__Issuer"
+    value = "BookShelf.Api"
+  }
+
+  env {
+    name  = "Jwt__Audience"
+    value = "BookShelf.Web"
+  }
+
+  env {
+    name  = "Jwt__Key"
+    value = var.jwt_key
+  }
+
+  env {
+    name  = "AzureStorage__AccountName"
+    value = "csharpdq43cm"
+  }
+
+  env {
+    name  = "AzureStorage__ContainerName"
+    value = "uploads"
+  }
+ }
+}
 
   ingress {
     external_enabled = true
