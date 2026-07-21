@@ -9,3 +9,6 @@ tags = {
   Platform    = "aca"
 }
 containerapp_env_name = "bookshelf-env-dev"
+
+api_container_name = "bookshelf-api-app"
+api_image          = "bookshelfacr2026.azurecr.io/bookshelf-api:v1"

@@ -22,3 +22,10 @@ variable "tags" {
 variable "containerapp_env_name" {
   type = string
 }
+variable "api_container_name" {
+  type = string
+}
+
+variable "api_image" {
+  type = string
+}

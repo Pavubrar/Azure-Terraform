@@ -32,3 +32,16 @@ resource "azurerm_role_assignment" "acr_pull" {
   role_definition_name = "AcrPull"
   scope                = module.acr.acr_id
 }
+module "container_app_api" {
+  source = "../../modules/container_app_api"
+
+  name                         = var.api_container_name
+  resource_group_name          = module.resource_group.resource_group_name
+  container_app_environment_id = module.container_app_environment.id
+
+  identity_id = module.managed_identity.id
+
+  registry_server = module.acr.login_server
+
+  image = var.api_image
+}
