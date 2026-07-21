@@ -77,6 +77,7 @@ resource "azurerm_subnet" "vm" {
   virtual_network_name = azurerm_virtual_network.mgmt.name
 
   address_prefixes = ["10.1.1.0/24"]
+  default_outbound_access_enabled = false
 }
 # -----------------------------
 # VM NSG
