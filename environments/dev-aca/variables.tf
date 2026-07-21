@@ -19,3 +19,6 @@ variable "tags" {
     Platform    = "containerapps"
   }
 }
+variable "containerapp_env_name" {
+  type = string
+}
