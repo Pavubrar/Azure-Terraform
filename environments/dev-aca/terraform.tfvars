@@ -11,7 +11,7 @@ tags = {
 containerapp_env_name = "bookshelf-env-dev"
 
 api_container_name = "bookshelf-api-app"
-api_image          = "bookshelfacr2026.azurecr.io/bookshelf-api:v4" 
+api_image          = "bookshelfacr2026.azurecr.io/bookshelf-api:v5" 
 sql_connection_string = "Server=tcp:bookshelf.database.windows.net,1433;Initial Catalog=free-sql-db-3528898;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Default;"
 
 jwt_key = "ChangeThisDevelopmentOnlyJwtSigningKey12345!"
