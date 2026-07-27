@@ -6,3 +6,4 @@ variable "registry_server" {}
 variable "image" {}
 variable "sql_connection_string" {}
 variable "jwt_key" {}
+variable "azure_client_id" {}

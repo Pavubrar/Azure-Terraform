@@ -54,6 +54,10 @@ resource "azurerm_container_app" "api" {
     name  = "AzureStorage__ContainerName"
     value = "uploads"
   }
+  env { 
+    name  = "AZURE_CLIENT_ID" 
+    value = var.azure_client_id
+    }
  }
 }
 

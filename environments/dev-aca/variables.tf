@@ -36,3 +36,6 @@ variable "sql_connection_string" {
 variable "jwt_key" {
   sensitive = true
 }
+variable "azure_client_id" {
+  type = string
+}

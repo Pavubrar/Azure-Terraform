@@ -46,4 +46,5 @@ module "container_app_api" {
   image = var.api_image
   sql_connection_string = var.sql_connection_string
   jwt_key = var.jwt_key
+  azure_client_id = var.azure_client_id
 }
