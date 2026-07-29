@@ -39,3 +39,9 @@ variable "jwt_key" {
 variable "azure_client_id" {
   type = string
 }
+variable "web_image" {
+  type = string
+}
+variable "web_container_name" {
+  type = string
+}

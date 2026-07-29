@@ -43,8 +43,19 @@ module "container_app_api" {
 
   registry_server = module.acr.login_server
 
-  image = var.api_image
+  image                 = var.api_image
   sql_connection_string = var.sql_connection_string
-  jwt_key = var.jwt_key
-  azure_client_id = var.azure_client_id
+  jwt_key               = var.jwt_key
+  azure_client_id       = var.azure_client_id
+}
+module "container_app_web" {
+  source = "../../modules/container_app_web"
+  name                         = var.web_container_name
+  resource_group_name          = module.resource_group.resource_group_name
+  container_app_environment_id = module.container_app_environment.id
+
+  registry_server = module.acr.login_server
+  identity_id     = module.managed_identity.id
+
+  image = var.web_image
 }

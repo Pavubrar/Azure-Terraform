@@ -31,3 +31,4 @@ variable "app_subnet_id" {
   type    = string
   default = null
 }
+variable "web_image"{}
