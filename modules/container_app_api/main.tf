@@ -58,6 +58,10 @@ resource "azurerm_container_app" "api" {
     name  = "AZURE_CLIENT_ID" 
     value = var.azure_client_id
     }
+    env {
+    name  = "Cors__AllowedOriginsCsv"
+    value = "http://localhost:3000,http://localhost:5173"
+}
  }
 }
 
