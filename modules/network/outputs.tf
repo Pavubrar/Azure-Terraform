@@ -20,4 +20,6 @@ output "vm_subnet_id" {
 output "mgmt_vnet_id" {
     value = azurerm_virtual_network.mgmt.id
     }
- 
+ output "aca_subnet_id" {
+  value = azurerm_subnet.aca.id
+}

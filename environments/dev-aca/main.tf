@@ -5,6 +5,13 @@ module "resource_group" {
   location = var.location
   tags     = var.tags
 }
+module "network" {
+  source = "../../modules/network"
+
+  location            = var.location
+  resource_group_name = module.resource_group.resource_group_name
+  vnet_name           = var.vnet_name
+}
 
 module "acr" {
   source = "../../modules/acr"
@@ -16,9 +23,10 @@ module "acr" {
 module "container_app_environment" {
   source = "../../modules/container_app_environment"
 
-  name                = var.containerapp_env_name
-  location            = module.resource_group.resource_group_location
-  resource_group_name = module.resource_group.resource_group_name
+  name                     = var.containerapp_env_name
+  location                 = module.resource_group.resource_group_location
+  resource_group_name      = module.resource_group.resource_group_name
+  infrastructure_subnet_id = module.network.aca_subnet_id
 }
 module "managed_identity" {
   source              = "../../modules/managed_identity"
@@ -49,7 +57,7 @@ module "container_app_api" {
   azure_client_id       = var.azure_client_id
 }
 module "container_app_web" {
-  source = "../../modules/container_app_web"
+  source                       = "../../modules/container_app_web"
   name                         = var.web_container_name
   resource_group_name          = module.resource_group.resource_group_name
   container_app_environment_id = module.container_app_environment.id

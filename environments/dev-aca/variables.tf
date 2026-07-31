@@ -45,3 +45,9 @@ variable "web_image" {
 variable "web_container_name" {
   type = string
 }
+# variable "infrastructure_subnet_id" {
+#   type = string
+# }
+variable "vnet_name" {
+  type = string
+}
