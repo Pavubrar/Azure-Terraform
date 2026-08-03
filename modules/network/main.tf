@@ -18,6 +18,7 @@ resource "azurerm_subnet" "app" {
   virtual_network_name = azurerm_virtual_network.this.name
 
   address_prefixes = ["10.0.1.0/24"]
+  default_outbound_access_enabled = false
    delegation {
     name = "appservice-delegation"
 
@@ -43,7 +44,7 @@ resource "azurerm_subnet" "private_endpoint" {
   virtual_network_name = azurerm_virtual_network.this.name
 
   address_prefixes = ["10.0.2.0/24"]
-
+default_outbound_access_enabled = false
   private_endpoint_network_policies = "Disabled"
 }
 
@@ -57,6 +58,7 @@ resource "azurerm_subnet" "gateway" {
   virtual_network_name = azurerm_virtual_network.this.name
 
   address_prefixes = ["10.0.3.0/24"]
+  default_outbound_access_enabled = false
 }
 
 
@@ -107,6 +109,7 @@ resource "azurerm_subnet_network_security_group_association" "vm" {
   subnet_id                 = azurerm_subnet.vm.id
 
   network_security_group_id = azurerm_network_security_group.vm.id
+  
 }
 
 #---VNET PEERing---#
@@ -138,7 +141,7 @@ resource "azurerm_subnet" "aca" {
   virtual_network_name = azurerm_virtual_network.this.name
 
   address_prefixes = ["10.0.4.0/23"]
-
+  default_outbound_access_enabled = false
   delegation {
     name = "aca-delegation"
 

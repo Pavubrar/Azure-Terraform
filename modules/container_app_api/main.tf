@@ -27,12 +27,12 @@ resource "azurerm_container_app" "api" {
   transport = "HTTP"
 
   port = 8080
-  path = "/health"
+  path = "/live"
 
-  interval_seconds = 5
+  interval_seconds = 10
   timeout          = 5
 
-  failure_count_threshold = 30
+  failure_count_threshold = 10
 }
 readiness_probe {
   transport = "HTTP"
