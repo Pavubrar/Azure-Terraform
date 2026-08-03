@@ -15,7 +15,8 @@ resource "azurerm_container_app" "api" {
   }
 
   template {
-
+    min_replicas = 1
+    max_replicas = 3
   container {
   name   = "bookshelf-api"
   image  = var.image
@@ -63,6 +64,41 @@ resource "azurerm_container_app" "api" {
     value = "http://localhost:3000,http://localhost:5173"
 }
  }
+ 
+}
+startup_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 5
+  timeout          = 5
+
+  failure_count_threshold = 30
+}
+readiness_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 10
+  timeout          = 5
+
+  failure_count_threshold = 3
+  success_count_threshold = 1
+}
+liveness_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 30
+  timeout          = 5
+
+  failure_count_threshold = 3
 }
 
   ingress {
