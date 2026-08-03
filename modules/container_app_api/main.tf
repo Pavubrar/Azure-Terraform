@@ -22,6 +22,42 @@ resource "azurerm_container_app" "api" {
   image  = var.image
   cpu    = 0.5
   memory = "1Gi"
+
+  startup_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 5
+  timeout          = 5
+
+  failure_count_threshold = 30
+}
+readiness_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 10
+  timeout          = 5
+
+  failure_count_threshold = 3
+  success_count_threshold = 1
+}
+liveness_probe {
+  transport = "HTTP"
+
+  port = 8080
+  path = "/health"
+
+  interval_seconds = 30
+  timeout          = 5
+
+  failure_count_threshold = 3
+}
+
   env {
         name  = "ASPNETCORE_ENVIRONMENT"
         value = "Production"
@@ -65,40 +101,6 @@ resource "azurerm_container_app" "api" {
 }
  }
  
-}
-startup_probe {
-  transport = "HTTP"
-
-  port = 8080
-  path = "/health"
-
-  interval_seconds = 5
-  timeout          = 5
-
-  failure_count_threshold = 30
-}
-readiness_probe {
-  transport = "HTTP"
-
-  port = 8080
-  path = "/health"
-
-  interval_seconds = 10
-  timeout          = 5
-
-  failure_count_threshold = 3
-  success_count_threshold = 1
-}
-liveness_probe {
-  transport = "HTTP"
-
-  port = 8080
-  path = "/health"
-
-  interval_seconds = 30
-  timeout          = 5
-
-  failure_count_threshold = 3
 }
 
   ingress {
