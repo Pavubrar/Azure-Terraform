@@ -50,7 +50,7 @@ liveness_probe {
   transport = "HTTP"
 
   port = 8080
-  path = "/health"
+  path = "/live"
 
   interval_seconds = 30
   timeout          = 5
@@ -66,6 +66,10 @@ liveness_probe {
     name  = "ConnectionStrings__DefaultConnection"
     value = var.sql_connection_string
   }
+  env {
+  name  = "RunMigrations"
+  value = "false"
+}
 
   env {
     name  = "Jwt__Issuer"
