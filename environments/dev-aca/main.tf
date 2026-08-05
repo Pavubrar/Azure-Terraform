@@ -27,6 +27,7 @@ module "container_app_environment" {
   location                 = module.resource_group.resource_group_location
   resource_group_name      = module.resource_group.resource_group_name
   infrastructure_subnet_id = module.network.aca_subnet_id
+ 
 }
 module "managed_identity" {
   source              = "../../modules/managed_identity"
