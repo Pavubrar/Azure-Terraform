@@ -65,12 +65,9 @@ resource "azurerm_private_dns_zone_virtual_network_link" "shared_storage_blob" {
   registration_enabled  = false
 }
 
-module "acr" {
-  source = "../../modules/acr"
-
-  acr_name            = var.acr_name
-  resource_group_name = module.resource_group.resource_group_name
-  location            = module.resource_group.resource_group_location
+data "azurerm_container_registry" "shared" {
+  name                = "bookshelfacr2026"
+  resource_group_name = "rg-bookshelf-aca-dev"
 }
 module "container_app_environment" {
   source = "../../modules/container_app_environment"
@@ -81,18 +78,18 @@ module "container_app_environment" {
   infrastructure_subnet_id = module.network.aca_subnet_id
 
 }
-module "managed_identity" {
-  source              = "../../modules/managed_identity"
+data "azurerm_user_assigned_identity" "shared" {
+
   name                = "bookshelf-api-identity"
-  location            = module.resource_group.resource_group_location
-  resource_group_name = module.resource_group.resource_group_name
+
+  resource_group_name = "rg-bookshelf-aca-dev"
 }
 
-resource "azurerm_role_assignment" "acr_pull" {
-  principal_id         = module.managed_identity.principal_id
-  role_definition_name = "AcrPull"
-  scope                = module.acr.acr_id
-}
+# resource "azurerm_role_assignment" "acr_pull" {
+#   principal_id = data.azurerm_user_assigned_identity.shared.principal_id
+#   role_definition_name = "AcrPull"
+#   scope = data.azurerm_container_registry.shared.id
+# }  ====tghis is alreday exist in acr
 module "container_app_api" {
   source = "../../modules/container_app_api"
 
@@ -100,9 +97,9 @@ module "container_app_api" {
   resource_group_name          = module.resource_group.resource_group_name
   container_app_environment_id = module.container_app_environment.id
 
-  identity_id = module.managed_identity.id
+  identity_id = data.azurerm_user_assigned_identity.shared.id
 
-  registry_server = module.acr.login_server
+  registry_server = data.azurerm_container_registry.shared.login_server
 
   image                 = var.api_image
   sql_connection_string = var.sql_connection_string
@@ -110,7 +107,7 @@ module "container_app_api" {
   azure_client_id       = var.azure_client_id
   storage_account_name  = data.terraform_remote_state.shared.outputs.storage_account_name
 
-  depends_on = [azurerm_role_assignment.acr_pull]
+#   depends_on = [azurerm_role_assignment.acr_pull]
 }
 module "container_app_web" {
   source                       = "../../modules/container_app_web"
@@ -118,12 +115,12 @@ module "container_app_web" {
   resource_group_name          = module.resource_group.resource_group_name
   container_app_environment_id = module.container_app_environment.id
 
-  registry_server = module.acr.login_server
-  identity_id     = module.managed_identity.id
+  registry_server = data.azurerm_container_registry.shared.login_server
+  identity_id     = data.azurerm_user_assigned_identity.shared.id
 
   image = var.web_image
 
-  depends_on = [azurerm_role_assignment.acr_pull]
+#   depends_on = [azurerm_role_assignment.acr_pull]
 }
 # ====Migration aca_job====
 
@@ -131,16 +128,16 @@ module "migration_job" {
 
   source = "../../modules/container_app_job_migration"
 
-  name = "bookshelf-db-migration"
+  name = "bookshelf-db-migration-v2"
 
   resource_group_name = module.resource_group.resource_group_name
   location            = module.resource_group.resource_group_location
 
   container_app_environment_id = module.container_app_environment.id
 
-  identity_id = module.managed_identity.id
+  identity_id = data.azurerm_user_assigned_identity.shared.id
 
-  registry_server = module.acr.login_server
+  registry_server = data.azurerm_container_registry.shared.login_server
 
   image = var.api_image
 
@@ -148,5 +145,5 @@ module "migration_job" {
 
   azure_client_id = var.azure_client_id
 
-  depends_on = [azurerm_role_assignment.acr_pull]
+#   depends_on = [azurerm_role_assignment.acr_pull]
 }

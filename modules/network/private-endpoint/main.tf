@@ -10,7 +10,7 @@ resource "azurerm_private_dns_zone" "this" {
 }
 
 # ---------------------------------
-# DNS LINK TO VNET for app to private endpoints
+# DNS LINK TO THE SHARED VNET
 # ---------------------------------
 
 resource "azurerm_private_dns_zone_virtual_network_link" "this" {
@@ -24,11 +24,18 @@ resource "azurerm_private_dns_zone_virtual_network_link" "this" {
 
   tags = var.tags
 }
+
+# Optional extra link retained for the legacy dev environment. Application
+# environments should create their own links from the shared-zone outputs.
 resource "azurerm_private_dns_zone_virtual_network_link" "sql_dns_mgmt" {
-  name                  = "sql-pep-dns-link"
-  resource_group_name   = "DevOps"
-  private_dns_zone_name = "privatelink.database.windows.net"
+  count = var.mgmt_vnet_id == null ? 0 : 1
+
+  name                  = coalesce(var.management_dns_link_name, "${var.name}-management-dns-link")
+  resource_group_name   = var.resource_group_name
+  private_dns_zone_name = azurerm_private_dns_zone.this.name
   virtual_network_id    = var.mgmt_vnet_id
+  registration_enabled  = false
+  tags                  = var.tags
 }
 
 # ---------------------------------

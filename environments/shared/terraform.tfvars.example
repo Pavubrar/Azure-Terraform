@@ -1,0 +1,21 @@
+# Use non-overlapping ranges. The ACA VNet example uses 10.20.0.0/16.
+resource_group_name              = "rg-bookshelf-shared-dev"
+location                         = "canadacentral"
+vnet_name                        = "vnet-bookshelf-shared-dev"
+vnet_address_space               = ["10.10.0.0/16"]
+private_endpoint_subnet_prefixes = ["10.10.1.0/24"]
+
+# Storage account names must be globally unique, 3-24 lowercase alphanumeric characters.
+storage_account_name = "replacewithuniquestorage"
+sql_server_name      = "replace-with-unique-sql-server"
+sql_database_name    = "bookshelf"
+
+# The Entra ID principal that administers Azure SQL.
+sql_aad_admin_username  = "admin@contoso.onmicrosoft.com"
+sql_aad_admin_object_id = "00000000-0000-0000-0000-000000000000"
+
+tags = {
+  Environment = "dev"
+  Project     = "bookshelf"
+  ManagedBy   = "terraform"
+}

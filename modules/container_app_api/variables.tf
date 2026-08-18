@@ -7,3 +7,4 @@ variable "image" {}
 variable "sql_connection_string" {}
 variable "jwt_key" {}
 variable "azure_client_id" {}
+variable "storage_account_name" {}

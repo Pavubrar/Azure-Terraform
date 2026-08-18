@@ -1,9 +1,10 @@
 resource "azurerm_mssql_server" "this" {
-  name                         = var.server_name
-  resource_group_name          = var.resource_group_name
-  location                     = var.location
+  name                = var.server_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
 
-  version                      = "12.0"
+  version                       = "12.0"
+  public_network_access_enabled = false
 
   azuread_administrator {
     login_username = var.aad_admin_username
@@ -12,7 +13,7 @@ resource "azurerm_mssql_server" "this" {
     azuread_authentication_only = true
 
   }
-   identity {
+  identity {
     type = "SystemAssigned"
   }
 
@@ -23,7 +24,7 @@ resource "azurerm_mssql_database" "this" {
   name      = var.database_name
   server_id = azurerm_mssql_server.this.id
 
-  sku_name = "GP_S_Gen5_2"
-storage_account_type = "Local"
-  tags = var.tags
+  sku_name             = "GP_S_Gen5_2"
+  storage_account_type = "Local"
+  tags                 = var.tags
 }

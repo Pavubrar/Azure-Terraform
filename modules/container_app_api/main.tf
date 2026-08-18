@@ -38,7 +38,7 @@ readiness_probe {
   transport = "HTTP"
 
   port = 8080
-  path = "/health"
+  path = "/live"
 
   interval_seconds = 10
   timeout          = 5
@@ -88,7 +88,7 @@ liveness_probe {
 
   env {
     name  = "AzureStorage__AccountName"
-    value = "csharpdq43cm"
+    value = var.storage_account_name
   }
 
   env {
@@ -104,7 +104,7 @@ liveness_probe {
     value = "http://localhost:3000,http://localhost:5173"
 }
  }
- 
+
 }
 
   ingress {

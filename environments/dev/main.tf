@@ -1,4 +1,16 @@
 
+data "terraform_remote_state" "shared" {
+  backend = "azurerm"
+
+  config = {
+    resource_group_name  = "devops"
+    storage_account_name = "tfstate1781994399"
+    container_name       = "tfstate"
+    key                  = "shared.terraform.tfstate"
+    use_azuread_auth     = true
+  }
+}
+
 # module "resource_group" {
 #   source = "../../modules/resource_group"
 
@@ -21,7 +33,7 @@ module "app_service" {
   sku_name                = var.sku_name
   service_plan_id         = var.service_plan_id
   enable_vnet_integration = true
-  app_subnet_id           = module.network.app_subnet_id
+  app_subnet_id           = data.terraform_remote_state.shared.outputs.app_subnet_id
 
 }
 
@@ -37,14 +49,6 @@ module "frontend" {
   enable_vnet_integration = false
 
 }
-module "storage" {
-  source = "../../modules/storage"
-
-  name                = var.storageAcc_name
-  resource_group_name = var.resource_group_name
-  location            = var.location
-}
-
 # module "key_vault" {
 #   source = "../../modules/key_vault"
 
@@ -53,74 +57,6 @@ module "storage" {
 #   location            = "Canada Central"
 #   tenant_id           = var.tenant_id
 # }
-
-module "database" {
-  source = "../../modules/database"
-
-  server_name         = "bookshelf"
-  resource_group_name = "BookApp"
-  database_name       = "free-sql-db-3528898"
-  location            = "Canada Central"
-
-  aad_admin_username  = "admin@MngEnvMCAP517100.onmicrosoft.com"
-  aad_admin_object_id = "d10c1b64-74e2-4205-b3af-6d24d28ca6c8"
-}
-
-
-module "network" {
-  source = "../../modules/network"
-
-  vnet_name           = "dev-vnet"
-  resource_group_name = "DevOps"
-  location            = "Canada Central"
-
-  tags = {
-    environment = "dev"
-    managed_by  = "terraform"
-  }
-}
-#-----Private endpoint for SQL---#
-module "sql_private_endpoint" {
-  source = "../../modules/network/private-endpoint"
-
-  name                = "sql-pep"
-  location            = "Canada Central"
-  resource_group_name = "DevOps"
-
-  subnet_id = module.network.private_endpoint_subnet_id
-  vnet_id   = module.network.vnet_id
-  mgmt_vnet_id = module.network.mgmt_vnet_id
-  private_connection_resource_id = module.database.sql_server_id
-
-  subresource_names = ["sqlServer"]
-
-  private_dns_zone_name = "privatelink.database.windows.net"
-
-  tags = {
-    environment = "dev"
-  }
-}
-
-module "storage_private_endpoint" {
-  source = "../../modules/network/private-endpoint"
-
-  name                = "storage"
-  location            = "Canada Central"
-  resource_group_name = "DevOps"
-
-  subnet_id = module.network.private_endpoint_subnet_id
-  vnet_id   = module.network.vnet_id
-  mgmt_vnet_id = module.network.mgmt_vnet_id
-  private_connection_resource_id = module.storage.storage_account_id
-
-  subresource_names = ["blob"]
-
-  private_dns_zone_name = "privatelink.blob.core.windows.net"
-
-  tags = {
-    environment = "dev"
-  }
-}
 
 module "vm" {
 
@@ -131,7 +67,7 @@ module "vm" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  subnet_id = module.network.vm_subnet_id
+  subnet_id = data.terraform_remote_state.shared.outputs.vm_subnet_id
 
   admin_username = "azureuser"
 

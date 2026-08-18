@@ -20,6 +20,13 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
 variable "mgmt_vnet_id" {
-  type = string
+  type    = string
+  default = null
+}
+
+variable "management_dns_link_name" {
+  type    = string
+  default = null
 }
