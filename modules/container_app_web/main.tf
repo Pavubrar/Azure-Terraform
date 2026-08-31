@@ -23,7 +23,7 @@ resource "azurerm_container_app" "web" {
       memory = "0.5Gi"
     }
 
-    min_replicas = 1
+    min_replicas = 0
     max_replicas = 2
   }
 

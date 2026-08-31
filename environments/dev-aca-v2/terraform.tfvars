@@ -12,7 +12,7 @@ containerapp_env_name = "bookshelf-env-dev-v2"
 
 api_container_name    = "bookshelf-api-app-v2"
 api_image             = "bookshelfacr2026.azurecr.io/bookshelf-api:latest"
-sql_connection_string = "Server=tcp:bookshelf.database.windows.net,1433;Initial Catalog=free-sql-db-3528898;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Managed Identity;User Id=1e115940-d5b0-4187-82fd-1116517fdcee removing for testing purpose;"
+sql_connection_string = "Server=tcp:bookshelf.database.windows.net,1433;Initial Catalog=free-sql-db-3528898;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Authentication=Active Directory Managed Identity;User Id=1e115940-d5b0-4187-82fd-1116517fdcee;"
 
 
 jwt_key            = "ChangeThisDevelopmentOnlyJwtSigningKey12345!"
