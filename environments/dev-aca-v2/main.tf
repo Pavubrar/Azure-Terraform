@@ -69,15 +69,15 @@ data "azurerm_container_registry" "shared" {
   name                = "bookshelfacr2026"
   resource_group_name = "rg-bookshelf-aca-dev"
 }
-module "container_app_environment" {
-  source = "../../modules/container_app_environment"
+# module "container_app_environment" {
+#   source = "../../modules/container_app_environment"
 
-  name                     = var.containerapp_env_name
-  location                 = module.resource_group.resource_group_location
-  resource_group_name      = module.resource_group.resource_group_name
-  infrastructure_subnet_id = module.network.aca_subnet_id
+#   name                     = var.containerapp_env_name
+#   location                 = module.resource_group.resource_group_location
+#   resource_group_name      = module.resource_group.resource_group_name
+#   infrastructure_subnet_id = module.network.aca_subnet_id
 
-}
+# }
 data "azurerm_user_assigned_identity" "shared" {
 
   name                = "bookshelf-api-identity"
@@ -90,60 +90,60 @@ data "azurerm_user_assigned_identity" "shared" {
 #   role_definition_name = "AcrPull"
 #   scope = data.azurerm_container_registry.shared.id
 # }  ====tghis is alreday exist in acr
-module "container_app_api" {
-  source = "../../modules/container_app_api"
+# module "container_app_api" {
+#   source = "../../modules/container_app_api"
 
-  name                         = var.api_container_name
-  resource_group_name          = module.resource_group.resource_group_name
-  container_app_environment_id = module.container_app_environment.id
+#   name                         = var.api_container_name
+#   resource_group_name          = module.resource_group.resource_group_name
+#   container_app_environment_id = module.container_app_environment.id
 
-  identity_id = data.azurerm_user_assigned_identity.shared.id
+#   identity_id = data.azurerm_user_assigned_identity.shared.id
 
-  registry_server = data.azurerm_container_registry.shared.login_server
+#   registry_server = data.azurerm_container_registry.shared.login_server
 
-  image                 = var.api_image
-  sql_connection_string = var.sql_connection_string
-  jwt_key               = var.jwt_key
-  azure_client_id       = var.azure_client_id
-  storage_account_name  = data.terraform_remote_state.shared.outputs.storage_account_name
+#   image                 = var.api_image
+#   sql_connection_string = var.sql_connection_string
+#   jwt_key               = var.jwt_key
+#   azure_client_id       = var.azure_client_id
+#   storage_account_name  = data.terraform_remote_state.shared.outputs.storage_account_name
 
-#   depends_on = [azurerm_role_assignment.acr_pull]
-}
-module "container_app_web" {
-  source                       = "../../modules/container_app_web"
-  name                         = var.web_container_name
-  resource_group_name          = module.resource_group.resource_group_name
-  container_app_environment_id = module.container_app_environment.id
+# #   depends_on = [azurerm_role_assignment.acr_pull]
+# }
+# module "container_app_web" {
+#   source                       = "../../modules/container_app_web"
+#   name                         = var.web_container_name
+#   resource_group_name          = module.resource_group.resource_group_name
+#   container_app_environment_id = module.container_app_environment.id
 
-  registry_server = data.azurerm_container_registry.shared.login_server
-  identity_id     = data.azurerm_user_assigned_identity.shared.id
+#   registry_server = data.azurerm_container_registry.shared.login_server
+#   identity_id     = data.azurerm_user_assigned_identity.shared.id
 
-  image = var.web_image
+#   image = var.web_image
 
-#   depends_on = [azurerm_role_assignment.acr_pull]
-}
-# ====Migration aca_job====
+# #   depends_on = [azurerm_role_assignment.acr_pull]
+# }
+# # ====Migration aca_job====
 
-module "migration_job" {
+# module "migration_job" {
 
-  source = "../../modules/container_app_job_migration"
+#   source = "../../modules/container_app_job_migration"
 
-  name = "bookshelf-db-migration-v2"
+#   name = "bookshelf-db-migration-v2"
 
-  resource_group_name = module.resource_group.resource_group_name
-  location            = module.resource_group.resource_group_location
+#   resource_group_name = module.resource_group.resource_group_name
+#   location            = module.resource_group.resource_group_location
 
-  container_app_environment_id = module.container_app_environment.id
+#   container_app_environment_id = module.container_app_environment.id
 
-  identity_id = data.azurerm_user_assigned_identity.shared.id
+#   identity_id = data.azurerm_user_assigned_identity.shared.id
 
-  registry_server = data.azurerm_container_registry.shared.login_server
+#   registry_server = data.azurerm_container_registry.shared.login_server
 
-  image = var.api_image
+#   image = var.api_image
 
-  sql_connection_string = var.sql_connection_string
+#   sql_connection_string = var.sql_connection_string
 
-  azure_client_id = var.azure_client_id
+#   azure_client_id = var.azure_client_id
 
-#   depends_on = [azurerm_role_assignment.acr_pull]
-}
+# #   depends_on = [azurerm_role_assignment.acr_pull]
+# }
