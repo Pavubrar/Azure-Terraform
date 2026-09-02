@@ -164,3 +164,12 @@ resource "azurerm_subnet" "aca" {
     }
   }
 }
+
+# ====Subnet for AKS==== USING IT IN MAIN FILE UNDER AKS TO KEEP THIS MNETWROK MODULE RESUABLE AND THIS D-SUBNET WOULDNOT HAVE ACCESS TO DAT.TF FROMHERE.
+
+# resource "azurerm_subnet" "aks" {
+#   name                 = "aks-subnet"
+#   resource_group_name  = data.azurerm_virtual_network.aca.resource_group_name
+#   virtual_network_name = data.azurerm_virtual_network.aca.name
+#   address_prefixes = var.aks_subnet_address_prefixes
+# }

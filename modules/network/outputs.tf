@@ -27,3 +27,7 @@ output "gateway_subnet_id" {
  output "aca_subnet_id" {
   value = var.create_aca_subnet ? azurerm_subnet.aca[0].id : null
 }
+
+output "aks_subnet_id" {
+  value = azurerm_subnet.aks.id
+}

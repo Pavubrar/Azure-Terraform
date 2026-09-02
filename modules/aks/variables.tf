@@ -1,12 +1,29 @@
-variable "name" {}
-variable "location" {}
-variable "resource_group_name" {}
-variable "dns_prefix" {}
+variable "cluster_name" {
+  type = string
+}
+
+variable "location" {
+  type = string
+}
+
+variable "resource_group_name" {
+  type = string
+}
+
+variable "dns_prefix" {
+  type = string
+}
+
+variable "aks_subnet_id" {
+  type = string
+}
 
 variable "node_count" {
+  type    = number
   default = 1
 }
 
 variable "vm_size" {
-  default = "Standard_D2s_v3"
+  type    = string
+  default = "Standard_B2s"
 }

@@ -47,3 +47,7 @@ variable "create_mgmt_vnet" {
   type    = bool
   default = false
 }
+variable "aks_subnet_address_prefixes" {
+  type    = list(string)
+  default = ["10.2.5.0/24"]
+}
