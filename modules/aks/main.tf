@@ -19,3 +19,12 @@ resource "azurerm_kubernetes_cluster" "this" {
     network_plugin = "azure"
   }
 }
+resource "azurerm_role_assignment" "acr_pull" {
+
+  scope = data.azurerm_container_registry.shared.id
+
+  role_definition_name = "AcrPull"
+
+  principal_id = azurerm_kubernetes_cluster.this.kubelet_identity[0].object_id
+}
+#  it is slareda dded via az cli, this is for furtuee safe if we need to reapply in any case
