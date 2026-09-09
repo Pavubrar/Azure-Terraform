@@ -27,3 +27,10 @@ variable "vm_size" {
   type    = string
   default = "Standard_B2s"
 }
+variable "acr_id" {
+  type = string
+}
+variable "log_analytics_workspace_id" {
+  type = string
+  default = null
+}

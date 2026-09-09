@@ -3,6 +3,13 @@ resource "azurerm_kubernetes_cluster" "this" {
   location            = var.location
   resource_group_name = var.resource_group_name
   dns_prefix          = var.dns_prefix
+  oidc_issuer_enabled = true
+  workload_identity_enabled = true
+
+#   microsoft_defender {
+# log_analytics_workspace_id = var.log_analytics_workspace_id
+# }
+
 
   default_node_pool {
     name       = "system"
@@ -21,7 +28,7 @@ resource "azurerm_kubernetes_cluster" "this" {
 }
 resource "azurerm_role_assignment" "acr_pull" {
 
-  scope = data.azurerm_container_registry.shared.id
+  scope = var.acr_id
 
   role_definition_name = "AcrPull"
 
